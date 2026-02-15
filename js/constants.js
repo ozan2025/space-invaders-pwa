@@ -1,6 +1,6 @@
 window.SI = window.SI || {};
 
-SI.VERSION = 'v15';
+SI.VERSION = 'v16';
 
 // Virtual game dimensions (all logic uses these coords)
 SI.GAME_WIDTH = 390;
