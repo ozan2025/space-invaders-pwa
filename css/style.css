@@ -23,7 +23,7 @@ html, body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: 40px;
   display: flex;
   flex-direction: column;
   background: #000;
