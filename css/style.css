@@ -23,6 +23,7 @@ html, body {
   left: 0;
   right: 0;
   bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   display: flex;
   flex-direction: column;
   background: #000;
@@ -43,7 +44,7 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px 44px 12px;
+  padding: 10px 12px 14px 12px;
   height: auto;
   gap: 10px;
   background: rgba(0, 0, 0, 0.9);
