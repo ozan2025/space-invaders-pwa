@@ -1,4 +1,4 @@
-var CACHE_NAME = 'space-invaders-v10';
+var CACHE_NAME = 'space-invaders-v11';
 
 var ASSETS = [
   './',
@@ -44,12 +44,19 @@ self.addEventListener('activate', function(event) {
   );
 });
 
-// Fetch: cache-first strategy
+// Fetch: network-first, fall back to cache (ensures updates load fast)
 self.addEventListener('fetch', function(event) {
   event.respondWith(
-    caches.match(event.request)
-      .then(function(cached) {
-        return cached || fetch(event.request);
+    fetch(event.request)
+      .then(function(response) {
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(event.request, clone);
+        });
+        return response;
+      })
+      .catch(function() {
+        return caches.match(event.request);
       })
   );
 });
