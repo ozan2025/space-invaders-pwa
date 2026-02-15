@@ -1,20 +1,20 @@
-var CACHE_NAME = 'space-invaders-v5';
+var CACHE_NAME = 'space-invaders-v6';
 
 var ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/css/style.css',
-  '/js/constants.js',
-  '/js/audio.js',
-  '/js/renderer.js',
-  '/js/entities.js',
-  '/js/input.js',
-  '/js/storage.js',
-  '/js/game.js',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/apple-touch-icon.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './css/style.css',
+  './js/constants.js',
+  './js/audio.js',
+  './js/renderer.js',
+  './js/entities.js',
+  './js/input.js',
+  './js/storage.js',
+  './js/game.js',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
 ];
 
 // Install: precache all assets
