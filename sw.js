@@ -1,4 +1,4 @@
-var CACHE_NAME = 'space-invaders-v7';
+var CACHE_NAME = 'space-invaders-v8';
 
 var ASSETS = [
   './',

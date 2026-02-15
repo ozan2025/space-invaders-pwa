@@ -48,12 +48,17 @@ SI.Input = {
     }, { once: true });
   },
 
+  _activeTouches: {},
+
   _bindButton: function(element, action) {
     var self = this;
 
     element.addEventListener('touchstart', function(e) {
       e.preventDefault();
       e.stopPropagation();
+      for (var t = 0; t < e.changedTouches.length; t++) {
+        self._activeTouches[e.changedTouches[t].identifier] = action;
+      }
       self[action] = true;
       self._unlockAudio();
     }, { passive: false });
@@ -61,11 +66,26 @@ SI.Input = {
     element.addEventListener('touchend', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      self[action] = false;
+      for (var t = 0; t < e.changedTouches.length; t++) {
+        delete self._activeTouches[e.changedTouches[t].identifier];
+      }
+      // Only release if no other touch is holding this action
+      var held = false;
+      for (var id in self._activeTouches) {
+        if (self._activeTouches[id] === action) { held = true; break; }
+      }
+      if (!held) self[action] = false;
     }, { passive: false });
 
-    element.addEventListener('touchcancel', function() {
-      self[action] = false;
+    element.addEventListener('touchcancel', function(e) {
+      for (var t = 0; t < e.changedTouches.length; t++) {
+        delete self._activeTouches[e.changedTouches[t].identifier];
+      }
+      var held = false;
+      for (var id in self._activeTouches) {
+        if (self._activeTouches[id] === action) { held = true; break; }
+      }
+      if (!held) self[action] = false;
     });
 
     // Mouse support for desktop testing
