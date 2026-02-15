@@ -44,7 +44,7 @@ SI.Game = {
 
     // Register service worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(function() {});
+      navigator.serviceWorker.register('sw.js?v=' + SI.VERSION).catch(function() {});
     }
 
     // Start game loop
