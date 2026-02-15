@@ -296,6 +296,10 @@ SI.Game = {
       if (!pu.active) continue;
       if (this._aabb(this.player, pu)) {
         pu.active = false;
+        var puLabels = { rapid_fire: 'RAPID FIRE!', double_shot: 'DOUBLE SHOT!', shield_restore: 'SHIELD!' };
+        if (puLabels[pu.type]) {
+          SI.Renderer.spawnFloatingText(pu.x + pu.width / 2, pu.y, puLabels[pu.type], '#0f0');
+        }
         if (pu.type === 'ozan_bomb') {
           this._detonateOzanBomb();
         } else {
