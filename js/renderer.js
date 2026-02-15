@@ -7,6 +7,7 @@ SI.Renderer = {
   spriteCache: {},
   stars: [],
   particles: [],
+  floatingTexts: [],
   shakeTimer: 0,
 
   init: function(canvasEl) {
@@ -113,6 +114,15 @@ SI.Renderer = {
     this.drawSprite('PLAYER', player.x, player.y, SI.COLORS.PLAYER, 2);
   },
 
+  drawUFO: function(ufo) {
+    if (!ufo || !ufo.active) return;
+    this.drawSprite('UFO', ufo.x, ufo.y, SI.COLORS.UFO, 2);
+    // Glow effect
+    this.ctx.shadowColor = SI.COLORS.UFO;
+    this.ctx.shadowBlur = 8;
+    this.ctx.shadowBlur = 0;
+  },
+
   drawEnemies: function(grid) {
     if (!grid || !grid.enemies) return;
     for (var i = 0; i < grid.enemies.length; i++) {
@@ -191,6 +201,7 @@ SI.Renderer = {
         case 'rapid_fire': color = SI.COLORS.POWERUP_RAPID; break;
         case 'double_shot': color = SI.COLORS.POWERUP_DOUBLE; break;
         case 'shield_restore': color = SI.COLORS.POWERUP_SHIELD; break;
+        case 'ozan_bomb': color = SI.COLORS.OZAN_BOMB; break;
         default: color = '#fff';
       }
       // Pulsing glow
@@ -217,7 +228,7 @@ SI.Renderer = {
       this.ctx.font = 'bold 10px monospace';
       this.ctx.textAlign = 'center';
       this.ctx.textBaseline = 'middle';
-      var letter = pu.type === 'rapid_fire' ? 'R' : pu.type === 'double_shot' ? 'D' : 'S';
+      var letter = pu.type === 'rapid_fire' ? 'R' : pu.type === 'double_shot' ? 'D' : pu.type === 'ozan_bomb' ? 'O' : 'S';
       this.ctx.fillText(letter, cx, cy);
     }
   },
@@ -264,6 +275,46 @@ SI.Renderer = {
         Math.ceil(p.size),
         Math.ceil(p.size)
       );
+    }
+    this.ctx.globalAlpha = 1;
+  },
+
+  // --- Floating Text ---
+  spawnFloatingText: function(x, y, text, color) {
+    this.floatingTexts.push({
+      x: x,
+      y: y,
+      text: text,
+      color: color || '#fff',
+      life: 1.5,
+      maxLife: 1.5,
+    });
+  },
+
+  updateFloatingTexts: function(dt) {
+    for (var i = this.floatingTexts.length - 1; i >= 0; i--) {
+      var ft = this.floatingTexts[i];
+      ft.y -= 40 * dt;
+      ft.life -= dt;
+      if (ft.life <= 0) {
+        this.floatingTexts.splice(i, 1);
+      }
+    }
+  },
+
+  _drawFloatingTexts: function() {
+    for (var i = 0; i < this.floatingTexts.length; i++) {
+      var ft = this.floatingTexts[i];
+      var alpha = ft.life / ft.maxLife;
+      this.ctx.globalAlpha = alpha;
+      this.ctx.fillStyle = ft.color;
+      this.ctx.font = 'bold 18px monospace';
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.shadowColor = ft.color;
+      this.ctx.shadowBlur = 12;
+      this.ctx.fillText(ft.text, ft.x, ft.y);
+      this.ctx.shadowBlur = 0;
     }
     this.ctx.globalAlpha = 1;
   },
@@ -328,7 +379,13 @@ SI.Renderer = {
     this.ctx.textBaseline = 'middle';
     this.ctx.shadowColor = SI.COLORS.WAVE_TEXT;
     this.ctx.shadowBlur = 20;
-    this.ctx.fillText('WAVE ' + waveNum, SI.GAME_WIDTH / 2, SI.GAME_HEIGHT / 2);
+    this.ctx.fillText('WAVE ' + waveNum, SI.GAME_WIDTH / 2, SI.GAME_HEIGHT / 2 - (waveNum >= 10 ? 15 : 0));
+    if (waveNum >= 10) {
+      this.ctx.font = 'bold 16px monospace';
+      this.ctx.fillStyle = '#ff0';
+      this.ctx.shadowColor = '#ff0';
+      this.ctx.fillText('OZAN IS PROUD', SI.GAME_WIDTH / 2, SI.GAME_HEIGHT / 2 + 25);
+    }
     this.ctx.shadowBlur = 0;
     this.ctx.globalAlpha = 1;
   },
@@ -381,10 +438,12 @@ SI.Renderer = {
       this.drawShields(state.shields || []);
       this.drawEnemies(state.enemyGrid);
       this.drawBoss(state.boss);
+      this.drawUFO(state.ufo);
       this.drawBullets(state.playerBullets || [], state.enemyBullets || []);
       this.drawPowerUps(state.powerUps || []);
       this.drawPlayer(state.player);
       this._drawParticles();
+      this._drawFloatingTexts();
       this.drawHUD(state.score, state.player ? state.player.lives : 0, state.wave, state.highScore, state.player ? state.player.activePowerUp : null);
     }
 

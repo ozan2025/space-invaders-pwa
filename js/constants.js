@@ -1,6 +1,6 @@
 window.SI = window.SI || {};
 
-SI.VERSION = 'v4';
+SI.VERSION = 'v5';
 
 // Virtual game dimensions (all logic uses these coords)
 SI.GAME_WIDTH = 390;
@@ -64,6 +64,16 @@ SI.BOSS = {
   APPEARS_EVERY: 5,
 };
 
+// UFO (mystery ship) config
+SI.UFO = {
+  WIDTH: 36,
+  HEIGHT: 16,
+  SPEED: 100,
+  POINTS: 100,
+  SPAWN_INTERVAL_MIN: 15,
+  SPAWN_INTERVAL_MAX: 30,
+};
+
 // Shield config
 SI.SHIELD = {
   COUNT: 4,
@@ -81,7 +91,8 @@ SI.POWERUP = {
   WIDTH: 18,
   HEIGHT: 18,
   DURATION: 8.0,
-  TYPES: ['rapid_fire', 'double_shot', 'shield_restore'],
+  TYPES: ['rapid_fire', 'double_shot', 'shield_restore', 'ozan_bomb'],
+  OZAN_BOMB_CHANCE: 0.03,
 };
 
 // Particle config
@@ -111,6 +122,8 @@ SI.COLORS = {
   HUD_SCORE: '#fff',
   HUD_HIGH: '#ff0',
   WAVE_TEXT: '#0ff',
+  UFO: '#f0f',
+  OZAN_BOMB: '#0ff',
 };
 
 // Sprite pixel data (each row separated by |, 1=filled 0=empty)
@@ -185,6 +198,15 @@ SI.SPRITES = {
     '000111000111000',
     '001001111001000',
     '000100000010000',
+  ],
+  UFO: [
+    '000001111111000000',
+    '000111111111110000',
+    '011111111111111100',
+    '101101101101101010',
+    '111111111111111110',
+    '001111111111111000',
+    '000011111111100000',
   ],
   BOSS: [
     '0000001111111100000000',

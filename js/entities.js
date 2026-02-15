@@ -327,7 +327,7 @@ SI.Entities = {
       y: y,
       width: SI.POWERUP.WIDTH,
       height: SI.POWERUP.HEIGHT,
-      type: types[Math.floor(Math.random() * types.length)],
+      type: Math.random() < SI.POWERUP.OZAN_BOMB_CHANCE ? 'ozan_bomb' : types[Math.floor(Math.random() * (types.length - 1))],
       speed: SI.POWERUP.FALL_SPEED,
       active: true,
       pulseTimer: 0,
@@ -384,6 +384,31 @@ SI.Entities = {
         }
         // No timed effect for shield restore
         break;
+      case 'ozan_bomb':
+        // Handled in game.js — clears all enemies on screen
+        break;
+    }
+  },
+
+  // --- UFO (Mystery Ship) ---
+  createUFO: function() {
+    var goingRight = Math.random() > 0.5;
+    return {
+      x: goingRight ? -SI.UFO.WIDTH : SI.GAME_WIDTH,
+      y: 38,
+      width: SI.UFO.WIDTH,
+      height: SI.UFO.HEIGHT,
+      speed: goingRight ? SI.UFO.SPEED : -SI.UFO.SPEED,
+      points: SI.UFO.POINTS,
+      active: true,
+    };
+  },
+
+  updateUFO: function(ufo, dt) {
+    if (!ufo || !ufo.active) return;
+    ufo.x += ufo.speed * dt;
+    if (ufo.x < -SI.UFO.WIDTH * 2 || ufo.x > SI.GAME_WIDTH + SI.UFO.WIDTH) {
+      ufo.active = false;
     }
   },
 };

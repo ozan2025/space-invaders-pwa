@@ -16,6 +16,8 @@ SI.Game = {
   bossIntroTimer: 0,
   lastFrameTime: 0,
   _nextWaveIsBoss: false,
+  ufo: null,
+  ufoTimer: 0,
 
   // --- Initialization ---
   init: function() {
@@ -143,9 +145,18 @@ SI.Game = {
     // Update power-ups
     SI.Entities.updatePowerUps(this.powerUps, dt);
 
+    // Update UFO
+    this.ufoTimer -= dt;
+    if (this.ufoTimer <= 0 && (!this.ufo || !this.ufo.active)) {
+      this.ufo = SI.Entities.createUFO();
+      this.ufoTimer = SI.UFO.SPAWN_INTERVAL_MIN + Math.random() * (SI.UFO.SPAWN_INTERVAL_MAX - SI.UFO.SPAWN_INTERVAL_MIN);
+    }
+    SI.Entities.updateUFO(this.ufo, dt);
+
     // Update visuals
     SI.Renderer.updateStarfield(dt);
     SI.Renderer.updateParticles(dt);
+    SI.Renderer.updateFloatingTexts(dt);
 
     // Collision detection
     this._checkCollisions();
@@ -202,6 +213,26 @@ SI.Game = {
         }
       }
 
+      // vs UFO
+      if (pb.active && this.ufo && this.ufo.active) {
+        if (this._aabb(pb, this.ufo)) {
+          pb.active = false;
+          this.ufo.active = false;
+          this.score += this.ufo.points;
+          SI.Audio.playExplosion();
+          SI.Renderer.spawnExplosion(
+            this.ufo.x + this.ufo.width / 2,
+            this.ufo.y + this.ufo.height / 2,
+            SI.COLORS.UFO
+          );
+          SI.Renderer.spawnFloatingText(
+            this.ufo.x + this.ufo.width / 2,
+            this.ufo.y,
+            'OZAN!', '#f0f'
+          );
+        }
+      }
+
       // vs boss
       if (pb.active && this.boss && this.boss.active) {
         if (this._aabb(pb, this.boss)) {
@@ -221,6 +252,12 @@ SI.Game = {
                 ['#f44', '#fa0', '#ff0'][Math.floor(Math.random() * 3)]
               );
             }
+            // Easter egg: "OZAN" floats up from boss
+            SI.Renderer.spawnFloatingText(
+              this.boss.x + this.boss.width / 2,
+              this.boss.y + this.boss.height / 2,
+              'OZAN', '#ff0'
+            );
           }
         }
       }
@@ -259,7 +296,11 @@ SI.Game = {
       if (!pu.active) continue;
       if (this._aabb(this.player, pu)) {
         pu.active = false;
-        SI.Entities.applyPowerUp(this.player, pu.type, this.shields);
+        if (pu.type === 'ozan_bomb') {
+          this._detonateOzanBomb();
+        } else {
+          SI.Entities.applyPowerUp(this.player, pu.type, this.shields);
+        }
         SI.Audio.playPowerUp();
       }
     }
@@ -376,6 +417,26 @@ SI.Game = {
       this.state = 'PLAYING';
       SI.Audio.startMusic();
     }
+  },
+
+  _detonateOzanBomb: function() {
+    // Kill all active enemies with explosions
+    if (this.enemyGrid) {
+      for (var i = 0; i < this.enemyGrid.enemies.length; i++) {
+        var e = this.enemyGrid.enemies[i];
+        if (!e.active) continue;
+        e.active = false;
+        this.enemyGrid.killCount++;
+        this.score += e.points;
+        SI.Renderer.spawnExplosion(e.x + e.width / 2, e.y + e.height / 2, e.color);
+      }
+    }
+    // Clear all enemy bullets
+    this.enemyBullets = [];
+    // Big "OZAN BOMB!" text
+    SI.Renderer.spawnFloatingText(SI.GAME_WIDTH / 2, SI.GAME_HEIGHT / 2, 'OZAN BOMB!', '#0ff');
+    SI.Audio.playExplosion();
+    SI.Renderer.triggerShake();
   },
 
   _gameOver: function() {
@@ -502,6 +563,8 @@ SI.Game = {
     this.enemyBullets = [];
     this.powerUps = [];
     this._nextWaveIsBoss = false;
+    this.ufo = null;
+    this.ufoTimer = SI.UFO.SPAWN_INTERVAL_MIN + Math.random() * (SI.UFO.SPAWN_INTERVAL_MAX - SI.UFO.SPAWN_INTERVAL_MIN);
 
     document.getElementById('menu-screen').classList.add('hidden');
     document.getElementById('gameover-screen').classList.add('hidden');
@@ -599,6 +662,7 @@ SI.Game = {
       player: this.player,
       enemyGrid: this.enemyGrid,
       boss: this.boss,
+      ufo: this.ufo,
       playerBullets: this.playerBullets,
       enemyBullets: this.enemyBullets,
       powerUps: this.powerUps,
