@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Space Invaders">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Space Invaders</title>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Menu Screen -->
+    <div id="menu-screen" class="overlay">
+      <h1 class="game-title">SPACE<br>INVADERS</h1>
+      <div class="menu-scores">
+        <span id="menu-high-score">HIGH SCORE: 0</span>
+      </div>
+      <div class="menu-buttons">
+        <button id="btn-new-game" class="menu-btn">NEW GAME</button>
+        <button id="btn-continue" class="menu-btn hidden">CONTINUE</button>
+      </div>
+      <div class="menu-footer">
+        <button id="btn-mute" class="icon-btn">SOUND: ON</button>
+        <div id="version-label" class="version-label"></div>
+      </div>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pause-overlay" class="overlay hidden">
+      <h2 class="pause-title">PAUSED</h2>
+      <div class="menu-buttons">
+        <button id="btn-resume" class="menu-btn">RESUME</button>
+        <button id="btn-quit" class="menu-btn menu-btn-secondary">QUIT TO MENU</button>
+      </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameover-screen" class="overlay hidden">
+      <h2 class="gameover-title">GAME OVER</h2>
+      <div class="gameover-stats">
+        <div class="stat-row"><span>SCORE</span><span id="go-score">0</span></div>
+        <div class="stat-row"><span>WAVE</span><span id="go-wave">1</span></div>
+        <div class="stat-row"><span>HIGH SCORE</span><span id="go-high">0</span></div>
+      </div>
+      <div id="new-high-score" class="new-high hidden">NEW HIGH SCORE!</div>
+      <div class="menu-buttons">
+        <button id="btn-play-again" class="menu-btn">PLAY AGAIN</button>
+        <button id="btn-go-menu" class="menu-btn menu-btn-secondary">MENU</button>
+      </div>
+    </div>
+
+    <!-- Touch Controls -->
+    <div id="touch-controls" class="hidden">
+      <button id="btn-left" class="touch-btn touch-btn-dir">&laquo;</button>
+      <button id="btn-fire" class="touch-btn touch-btn-fire">FIRE</button>
+      <button id="btn-right" class="touch-btn touch-btn-dir">&raquo;</button>
+    </div>
+  </div>
+
+  <script src="js/constants.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
